@@ -6,8 +6,8 @@ app = Flask(__name__, template_folder="templates")
 
 @app.route('/newPost')
 def home():
-    username = ''
-    password = ''
+    username = '***'
+    password = '***'
 
     image = 'test.png'
 
