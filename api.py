@@ -2,14 +2,14 @@ from flask import Flask
 from flask import request
 from instapy_cli import client
 
-app = Flask(__name__, template_folder="templates")
+app = Flask(__name__)
 
 @app.route('/newPost')
 def home():
     username = '***'
     password = '***'
 
-    image = 'test.png'
+    image = request.args['imgSrc']
 
     text = request.args['postText']
 
@@ -20,5 +20,5 @@ def home():
     
     return response
 
-if __name__ == '__main__':
-    app.run(debug=True)
+#if __name__ == '__main__':
+#    app.run(host='0.0.0.0', debug=True)
