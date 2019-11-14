@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import request
 from instapy_cli import client
+import json
 
 app = Flask(__name__)
 
@@ -9,16 +10,24 @@ def home():
     username = '***'
     password = '***'
 
-    image = request.args['imgSrc']
+    image = request.args.get("imgSrc", "NO_IMAGE_DEFINED")
 
-    text = request.args['postText']
+    text = request.args.get("postText", "NO_TEXT_DEFINED")
 
-    repsonse = "empty"
+    postOnStory = request.args.get("postOnStory",False)
+
+    repsonse = {}
+    repsonse["imgSrc"] = image
+    repsonse["postText"] = text
+    repsonse["postOnStory"] = postOnStory
 
     with client(username, password) as cli:
-            response = cli.upload(image, text)
-    
-    return response
+            if cli.upload(image, text) == None:
+                repsonse["msg"] = "Upload was not successfull"
+            else:
+                repsonse["msg"] = "Upload successfull"
 
-#if __name__ == '__main__':
-#    app.run(host='0.0.0.0', debug=True)
+    return json.dumps(repsonse)
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', debug=True)
