@@ -14,7 +14,7 @@ def home():
 
     text = request.args.get("postText", "NO_TEXT_DEFINED")
 
-    postOnStory = request.args.get("postOnStory",False)
+    postOnStory = request.args.get("postOnStory",False) == 'True'
 
     repsonse = {}
     repsonse["imgSrc"] = image
@@ -22,10 +22,16 @@ def home():
     repsonse["postOnStory"] = postOnStory
 
     with client(username, password) as cli:
-            if cli.upload(image, text) == None:
-                repsonse["msg"] = "Upload was not successfull"
-            else:
-                repsonse["msg"] = "Upload successfull"
+        result = None
+        if postOnStory:
+            result = cli.upload(image, story=True)
+        else:
+            result = cli.upload(image, text)
+
+        if result == None:
+            repsonse["msg"] = "Upload was not successfull"
+        else:
+            repsonse["msg"] = "Upload successfull"
 
     return json.dumps(repsonse)
 
