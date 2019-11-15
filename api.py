@@ -10,28 +10,35 @@ def home():
     username = '***'
     password = '***'
 
-    image = request.args.get("imgSrc", "NO_IMAGE_DEFINED")
+    image = request.args.get("imgSrc", "NO_IMAGE_DEFINED") #Image Path
 
-    text = request.args.get("postText", "NO_TEXT_DEFINED")
+    text = request.args.get("postText", "NO_TEXT_DEFINED") #Post Description
 
+    #Post on Story? If you post on Story than your provided text is ignored
     postOnStory = request.args.get("postOnStory",False) == 'True'
+    
+    #Fake Post? If True the post will not be commited to Instagram
+    isFakePost = request.args.get("isFakePost", False) == 'True'
 
     repsonse = {}
     repsonse["imgSrc"] = image
     repsonse["postText"] = text
     repsonse["postOnStory"] = postOnStory
+    
+    if isFakePost == False:
+        with client(username, password) as cli:
+            result = None
+            if postOnStory:
+                result = cli.upload(image, story=True)
+            else:
+                result = cli.upload(image, text)
 
-    with client(username, password) as cli:
-        result = None
-        if postOnStory:
-            result = cli.upload(image, story=True)
-        else:
-            result = cli.upload(image, text)
-
-        if result == None:
-            repsonse["msg"] = "Upload was not successfull"
-        else:
-            repsonse["msg"] = "Upload successfull"
+            if result == None:
+                repsonse["msg"] = "Upload was not successfull"
+            else:
+                repsonse["msg"] = "Upload successfull"
+    else:
+        repsonse["msg"] = "This was a fake Post"
 
     return json.dumps(repsonse)
 
