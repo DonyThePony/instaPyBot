@@ -8,8 +8,14 @@ app = Flask(__name__)
 
 @app.route('/newPost')
 def home():
+    useFakeAccount = request.args.get("useFakeAccount", False) == 'True'
+
     username = '***'
     password = '***'
+
+    if useFakeAccount:
+        username = '***'
+        password = '***'
 
     image = request.args.get("imgSrc", "NO_IMAGE_DEFINED") #Image Path
 
