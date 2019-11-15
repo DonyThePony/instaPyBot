@@ -20,11 +20,12 @@ def home():
     #Fake Post? If True the post will not be commited to Instagram
     isFakePost = request.args.get("isFakePost", False) == 'True'
 
-    repsonse = {}
-    repsonse["imgSrc"] = image
-    repsonse["postText"] = text
-    repsonse["postOnStory"] = postOnStory
-    
+    response = {}
+    response["imgSrc"] = image
+    response["postText"] = text
+    response["postOnStory"] = postOnStory
+    response["posted"] = False
+
     if isFakePost == False:
         with client(username, password) as cli:
             result = None
@@ -34,13 +35,14 @@ def home():
                 result = cli.upload(image, text)
 
             if result == None:
-                repsonse["msg"] = "Upload was not successfull"
+                response["msg"] = "Upload was not successfull"
             else:
-                repsonse["msg"] = "Upload successfull"
+                response["msg"] = "Upload successfull"
+                repsonse["posted"] = True
     else:
-        repsonse["msg"] = "This was a fake Post"
+        response["msg"] = "This was a fake Post"
 
-    return json.dumps(repsonse)
+    return json.dumps(response)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
