@@ -2,6 +2,7 @@ from flask import Flask
 from flask import request
 from instapy_cli import client
 import json
+import random
 
 app = Flask(__name__)
 
@@ -38,8 +39,10 @@ def home():
                 response["msg"] = "Upload was not successfull"
             else:
                 response["msg"] = "Upload successfull"
-                repsonse["posted"] = True
+                response["posted"] = True
     else:
+        if random.random() < .5:
+            response["posted"] = True
         response["msg"] = "This was a fake Post"
 
     return json.dumps(response)
