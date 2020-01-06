@@ -1,6 +1,6 @@
 from flask import Flask
 from flask import request
-from instapy_cli import client
+from instabot import Bot
 import json
 import random
 
@@ -16,6 +16,9 @@ def home():
     if useFakeAccount:
         username = '***'
         password = '***'
+    
+    bot = Bot()
+    bot.login(username, password)
 
     image = request.args.get("imgSrc", "NO_IMAGE_DEFINED") #Image Path
 
@@ -34,18 +37,18 @@ def home():
     response["posted"] = False
 
     if isFakePost == False:
-        with client(username, password) as cli:
-            result = None
-            if postOnStory:
-                result = cli.upload(image, story=True)
-            else:
-                result = cli.upload(image, text)
+        result = None
+        if postOnStory:
+            result = bot.upload_story_photo(image)
+        else:
+            bot.upload(image, text)
+        result = bot.api.last_response
 
-            if result == None:
-                response["msg"] = "Upload was not successfull"
-            else:
-                response["msg"] = "Upload successfull"
-                response["posted"] = True
+        if result == None:
+            response["msg"] = "Upload was not successfull"
+        else:
+            response["msg"] = "Upload successfull"
+            response["posted"] = True
     else:
         if random.random() < .5:
             response["posted"] = True
